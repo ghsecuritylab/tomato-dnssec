@@ -7,7 +7,11 @@
 	Tomato GUI
 	Copyright (C) 2006-2007 Jonathan Zarate
 	http://www.polarcloud.com/tomato/
-
+	
+	Tomato VLAN update and bug correction
+	Copyright (C) 2011-2012 Vicente Soriano
+	http://tomatoraf.com
+	
 	For use with Tomato Firmware only.
 	No part of this file may be used without permission.
 -->
@@ -69,6 +73,7 @@ switch(nvram['boardtype']) {
   case '0x04ef':  // WRT320N/E2000
   case '0x04cf':  // WRT610Nv2/E3000, RT-N16
   case '0xf52c':  // E4200v1
+  case '0xf5b2':  // RT-N66
     trunk_vlan_supported = 1;
     break;
   default:
@@ -91,6 +96,7 @@ switch(nvram['boardtype']) {
       break;
     }
   case '0x048e':  // WL-520GU, WL-500G Premium v2
+  case '0x0550':  // RT-N53
     COL_P0N = '3';
     COL_P1N = '2';
     COL_P2N = '1';
@@ -99,12 +105,33 @@ switch(nvram['boardtype']) {
     break;
   case '0x04ef':  // WRT320N/E2000
   case '0x04cf':  // WRT610Nv2/E3000, RT-N16, WNR3500L
+  case '0xf5b2':  // RT-N66
     COL_P0N = '4';
     COL_P1N = '3';
     COL_P2N = '2';
     COL_P3N = '1';
     COL_P4N = '0';
     break;
+  case '0xf53a':  // E1000v2.1/E1200v1
+  case '0xf53b':   // E1000v2/E1500
+   if (((nvram['boot_hw_model'] == 'E1200') && (nvram['boot_hw_ver'] == '1.0')) || (nvram['boot_hw_model'] == 'E1500')) {
+     COL_P0N = '0';
+     COL_P1N = '1';
+     COL_P2N = '2';
+     COL_P3N = '3';
+     COL_P4N = '4';
+   break;
+   }
+   COL_P0N = '1';
+   COL_P1N = '2';
+   COL_P2N = '3';
+   COL_P3N = '4';
+   COL_P4N = '0';
+   break;
+  case '0xc550':  // E1550
+  case '0xf550':  // E2500
+  case '0x058e':  // E900
+  case '0xf52a':  // E3200
   case '0xf52c':  // E4200v1
     COL_P0N = '0';
     COL_P1N = '1';
@@ -913,7 +940,7 @@ if(port_vlan_supported) vlg.setup();
 <li><b>Tagged</b> - Enable 802.1Q tagging of ethernet frames on a particular port/VLAN
 <script type='text/javascript'>
 if(!trunk_vlan_supported)
-  W(' <i>(not known to be supported on this model)</i>');
+  W(' <i><b>(unknown support for this model...contact the developper (Victek))</i></b>');
 </script>
 </li>
 <li><b>Default</b> - VLAN ID assigned to untagged frames received by the router.</li>
@@ -943,9 +970,8 @@ if((trunk_vlan_supported) || (nvram.trunk_vlan_so == '1')) {
 </ul>
 <br>
 <ul>
-<li>This is highly <b>experimental</b> and hasn't been tested in anything but a Linksys WRT54GL v1.1 running a Teaman-ND K24 build and a Cisco/Linksys E3000 running a Teaman-RT K26 build.</li>
+<li>This is an <b>experimental</b> feature and hasn't been tested in anything but a Linksys WRT54GL v1.1 running a Teaman-ND K24 build and a Cisco/Linksys E3000 running a Teaman-RT K26 build.</li>
 <li>There's lots of things that could go wrong, please do think about what you're doing and take a backup before hitting the 'Save' button on this page!</li>
-<li>You've been warned!</li>
 </ul>
 </ul>
 <div id='trunk_vlan_override' style='display:none'>

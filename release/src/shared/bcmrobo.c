@@ -1033,7 +1033,7 @@ vlan_setup:
 #endif
 		} else if (robo->devid == DEVID5325) {
 			val32 |= ((1 << 20) |		/* valid write */
-				  ((vid_map >> 4) << 12));	/* vlan id bit[11:4] */
+				  ((vid0 >> 4) << 12));	/* vlan id bit[11:4] */
 			/* VLAN Write Register (Page 0x34, Address 0x08-0x0B) */
 			robo->ops->write_reg(robo, PAGE_VLAN, REG_VLAN_WRITE, &val32,
 			                     sizeof(val32));
